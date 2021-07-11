@@ -106,6 +106,8 @@ void loop() {
 bool processPopRockCassette(byte maxWashLeftRawValue) {
   byte washLeftValue = readCurrentWashLeftRawValue();
   if (washLeftValue == READ_BYTE_ERROR_VALUE) {
+    Serial.println("Failed to reset cassette.");
+    blinkFast5Sec();
     return false;
   }
   
