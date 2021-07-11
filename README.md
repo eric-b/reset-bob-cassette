@@ -8,12 +8,12 @@ Arduino sketch (source) is in sub directory *reset-bob-cassette*.
 
 ## Wiring:
  
-| Arduino  | USB A |
-|----------|-------|
-| A4 (SDA) | D-    |
-| A5 (SCL) | D+    |
-| 3.3V     | +     |
-| Gnd      | -     |
+| Arduino  | USB A | Color  |
+|----------|-------|--------|
+| A4 (SDA) | D-    | yellow |
+| A5 (SCL) | D+    | green  |
+| 3.3V     | +     | red    |
+| Gnd      | -     | white  |
 
 Cassette connector: Isolate/cover (with a piece of paper) connector side opposite to cassette labels and connect USB A female to connector on cassette side with labels.
 
