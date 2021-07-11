@@ -64,6 +64,7 @@ const byte CASSETTE_POP_FULL_COUNT_VALUE = 0x4E; // = 30 (wash left XOR 0x50)
 const byte CASSETTE_ROCK_FULL_COUNT_VALUE = 0x51; // = 1 (wash left XOR 0x50)
 
 const byte TRANSMISSION_SUCCESS_CODE = 0;
+const byte READ_BYTE_ERROR_VALUE = 0xFF;
 
 enum cassette_category {
   undefined,
@@ -103,7 +104,11 @@ void loop() {
 }
 
 bool processPopRockCassette(byte maxWashLeftRawValue) {
-  byte washLeftValue = readCurrentWashLeftRawValue(); // possible bug here: may return 0 if failed to read. Should return an impossible value
+  byte washLeftValue = readCurrentWashLeftRawValue();
+  if (washLeftValue == READ_BYTE_ERROR_VALUE) {
+    return false;
+  }
+  
   if (isWashLeftLessThanMaxValue(washLeftValue, maxWashLeftRawValue)) {
     if (writeCassetteWashLeft(maxWashLeftRawValue)) {
       Serial.println("Cassette was reset successfully.");
@@ -153,9 +158,9 @@ cassette_category readCassetteKind() {
 
 byte readCurrentWashLeftRawValue() {
   Serial.print("Reading wash left...");
-  byte count = readI2CByte(CASSETTE_REMAINING_COUNT_BYTE_ADDR);
-  Serial.println(count ^ 0x50);
-  return count;
+  byte rawValue = readI2CByte(CASSETTE_REMAINING_COUNT_BYTE_ADDR);
+  Serial.println(rawValue ^ 0x50);
+  return rawValue;
 }
 
 bool writeCassetteWashLeft(uint8_t washLeftRawValue) {
@@ -191,7 +196,7 @@ bool writeI2CByte(byte data_addr, byte data_value) {
 // Returns 0xFF in case of read error.
 byte readI2CByte(byte data_addr) {
   const int data_length = 1;
-  byte data = 0xFF; // 0xFF means error
+  byte data = READ_BYTE_ERROR_VALUE;
   Wire.beginTransmission(ADDR_I2C_DEVICE);
   Wire.write(data_addr);
   if (Wire.endTransmission() != TRANSMISSION_SUCCESS_CODE) {
